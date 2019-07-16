@@ -1,10 +1,9 @@
 package com.nogas.downloader
 
-import android.app.Notification
-import android.app.NotificationManager
-import android.app.Service
+import android.app.*
 import android.content.Context
 import android.content.Intent
+import android.os.Build
 import android.os.IBinder
 import android.util.Log
 
@@ -56,17 +55,121 @@ class DownloadService : Service() {
 
     private fun makeNotification(url:String){
 
+        // creando una canal de NOTIFICACION, para las nuevas versiones de ANDROID ( >=8.0 ): (codigo base, copy-paste)
+        /*
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O){
+
+            val channel = NotificationChannel(
+                id,"name",
+                NotificationManager.IMPORTANCE_DEFAULT)
+            val manager = getSystemService(NOTIFICATION_CHANNEL_ID)
+                as NotificationManager
+            manager.createNotificationChannel(channel)
+            val builder = Notification.Builder(this,id)
+
+
+        }
+        */
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O){
+
+            val channel = NotificationChannel(
+                NOTIFICATION_CHANNEL_ID, NOTIFICATION_CHANNEL_ID,
+                NotificationManager.IMPORTANCE_DEFAULT)
+            val manager = getSystemService(Context.NOTIFICATION_SERVICE)
+                    as NotificationManager
+            manager.createNotificationChannel(channel)
+
+            // ESTE ES EL CODIGO base para crear una notificacion
+
+            val builder = Notification.Builder(this, NOTIFICATION_CHANNEL_ID)
+                .setContentTitle("Tu descarga esta completa")
+                .setContentTitle(url)
+                .setAutoCancel(true)
+                .setSmallIcon(R.drawable.icon_download)
+
+            // cuando el usuario hace click a la notificacion, lanza el activity: DOWNLOADERACTIVITY:
+
+            val intent = Intent(this,DownloaderActivity::class.java)
+            intent.action = "downloadcomplete"
+            intent.putExtra("url",url)
+
+            val pending = PendingIntent.getActivity(
+                this,0,intent,0
+            )
+            builder.setContentIntent(pending)
+
+
+            val notification = builder.build()
+
+            manager.notify(NOTIFICATION_ID,notification)
+
+        }
+        else{
+
+            // ESTE ES EL CODIGO base para crear una notificacion
+
+            val builder = Notification.Builder(this)
+                .setContentTitle("Tu descarga esta completa")
+                .setContentTitle(url)
+                .setAutoCancel(true)
+                .setSmallIcon(R.drawable.icon_download)
+
+            // cuando el usuario hace click a la notificacion, lanza el activity: DOWNLOADERACTIVITY:
+
+            val intent = Intent(this,DownloaderActivity::class.java)
+            intent.action = "downloadcomplete"
+            intent.putExtra("url",url)
+
+            val pending = PendingIntent.getActivity(
+                this,0,intent,0
+            )
+            builder.setContentIntent(pending)
+
+
+
+
+            val notification = builder.build()
+
+            val manager = getSystemService(Context.NOTIFICATION_SERVICE)
+                    as NotificationManager
+            manager.notify(NOTIFICATION_ID,notification)
+
+        }
+
+
+        /*
+        * este codigo servia para versiones anterioes a android 8:
+        *
+
         // ESTE ES EL CODIGO base para crear una notificacion
-        val builder = Notification.Builder(thia)
-            .setContentTitle("tittle")
-            .setContentTitle("text")
+
+        val builder = Notification.Builder(this)
+            .setContentTitle("Tu descarga esta completa")
+            .setContentTitle(url)
             .setAutoCancel(true)
-            .setSmallIcon(R.drawable.icon)
+            .setSmallIcon(R.drawable.icon_download)
+
+        // cuando el usuario hace click a la notificacion, lanza el activity: DOWNLOADERACTIVITY:
+
+        val intent = Intent(this,DownloaderActivity::class.java)
+        intent.action = "downloadcomplete"
+        intent.putExtra("url",url)
+
+        val pending = PendingIntent.getActivity(
+            this,0,intent,0
+        )
+        builder.setContentIntent(pending)
+
+
+
+
         val notification = builder.build()
 
         val manager = getSystemService(Context.NOTIFICATION_SERVICE)
             as NotificationManager
-        manager.notify(ID,notification)
+        manager.notify(NOTIFICATION_ID,notification)
+
+        * */
 
     }
 
@@ -79,5 +182,14 @@ class DownloadService : Service() {
 
     override fun onBind(intent: Intent?): IBinder? {
         return null
+    }
+
+    /*
+    * las variables que se necesitan para hacer las NOTIFICACIONES
+    * */
+    companion object {
+        // ID code that is used to lunch the download notifications
+        private const val NOTIFICATION_CHANNEL_ID = "nogayoDownloadService"
+        private const val NOTIFICATION_ID = 1234
     }
 }
