@@ -21,6 +21,15 @@ class DownloaderActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_downloader)
 
+        if (intent != null){
+            //sera lanzado por una NOTIFICACION, porque una descarga fue terminada de descargar:
+            // entonces, haz algo con esa DESCARGA:
+            val url = intent.getStringExtra("url")
+            Toast.makeText(this,"hey, he vuelto!! porque tu terminaste de descargar el archivo: $url",Toast.LENGTH_SHORT).show()
+        }else{
+            Toast.makeText(this,"estoy empezando de nuevo, normalmente",Toast.LENGTH_SHORT).show()
+        }
+
         // asegurate que tenemos permisos para guardar archivos:
         //askPermission()
 
