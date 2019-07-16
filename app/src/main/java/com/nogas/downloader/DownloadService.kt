@@ -1,6 +1,9 @@
 package com.nogas.downloader
 
+import android.app.Notification
+import android.app.NotificationManager
 import android.app.Service
+import android.content.Context
 import android.content.Intent
 import android.os.IBinder
 import android.util.Log
@@ -35,6 +38,9 @@ class DownloadService : Service() {
 
         Downloader().downloaderFake(url)
 
+        // Creando una Notificaion:
+        makeNotification(url)
+
         // si..!! ya descarga ya termino:
         val doneIntent = Intent()
         doneIntent.action = "downloadcomplete"
@@ -45,6 +51,22 @@ class DownloadService : Service() {
         /*
         * AQUI es donde realmente finaliza la descarga, por eso, to-do este codigo,debe ir aqui adentro, del hilo, que es una FUNCION LAMBDA.
         * */
+
+    }
+
+    private fun makeNotification(url:String){
+
+        // ESTE ES EL CODIGO base para crear una notificacion
+        val builder = Notification.Builder(thia)
+            .setContentTitle("tittle")
+            .setContentTitle("text")
+            .setAutoCancel(true)
+            .setSmallIcon(R.drawable.icon)
+        val notification = builder.build()
+
+        val manager = getSystemService(Context.NOTIFICATION_SERVICE)
+            as NotificationManager
+        manager.notify(ID,notification)
 
     }
 
