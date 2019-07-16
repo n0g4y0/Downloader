@@ -14,14 +14,11 @@ class DownloadService : Service() {
 
                 val url = intent.getStringExtra("url")
                 Log.d("DownloadService","ellos quieren que descargue desde esta URL: $url")
-                Downloader().downloaderFake(url)
 
-                // si..!! ya descarga ya termino:
-                val doneIntent = Intent()
-                doneIntent.action = "downloadcomplete"
-                doneIntent.putExtra("url",url)
-                //se envia el BRODASCAST
-                sendBroadcast(doneIntent)
+                val thread = Thread{
+                    doWork(url)
+                }
+                thread.start()
 
             }else if (intent.action == "bark"){
                 Log.d("DownloadService","ruff")
@@ -32,6 +29,23 @@ class DownloadService : Service() {
         }
 
         return Service.START_STICKY
+    }
+
+    private fun doWork(url:String){
+
+        Downloader().downloaderFake(url)
+
+        // si..!! ya descarga ya termino:
+        val doneIntent = Intent()
+        doneIntent.action = "downloadcomplete"
+        doneIntent.putExtra("url",url)
+        //se envia el BRODASCAST
+        sendBroadcast(doneIntent)
+
+        /*
+        * AQUI es donde realmente finaliza la descarga, por eso, to-do este codigo,debe ir aqui adentro, del hilo, que es una FUNCION LAMBDA.
+        * */
+
     }
 
 
