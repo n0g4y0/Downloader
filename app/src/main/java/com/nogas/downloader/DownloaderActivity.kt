@@ -61,7 +61,7 @@ class DownloaderActivity : AppCompatActivity() {
         Toast.makeText(this,"Descargando $url ...",Toast.LENGTH_SHORT).show()
         Log.d("DownloaderActivity", "Iniciando descarga del $url ...")
 
-        //Descargar Usando un SERVICIO.
+        //TODO descargar usando un servicio
 
     }
 }
