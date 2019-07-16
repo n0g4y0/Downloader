@@ -1,5 +1,6 @@
 package com.nogas.downloader
 
+import android.content.Intent
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
@@ -62,6 +63,10 @@ class DownloaderActivity : AppCompatActivity() {
         Log.d("DownloaderActivity", "Iniciando descarga del $url ...")
 
         //TODO descargar usando un servicio
+
+        val intent = Intent(this,DownloadService::class.java)
+        intent.putExtra("url",url)
+        startService(intent)
 
     }
 }
